@@ -1,5 +1,16 @@
 # lilcaster
-A lightweight wrapper around ffmpeg to ease livestream testing and automation
+A lightweight wrapper around ffmpeg to ease livestream testing and automation.
+
+# Goals
+- Create a light weight wrapper around ffmpeg, it should be easy to reason about
+- It should be flexible and reusable.
+- A primary use-case is to test live streaming services where a user will be running many live streams, one after another
+  - The streams need to be easy to differentiate, so features like burning in a timestamp and other differentiating features are first class
+  - The ability to stop/restart a live stream easily is required
+    - when using a scriptable source or sink, we need the option to restart both with and without re-running the scripts
+  - filters should also be scriptable
+  - All scriptable elements need to be execeedingly un-complicated
+- 'magic' is bad. All behaviour should be clear and easy to reason about.
 
 ## Scenarios
 In the config file, lilcaster.yml there is a list of `scenarios`
