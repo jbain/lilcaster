@@ -29,6 +29,7 @@ scenarios:
       - type: timestamp
       - type: custom
         string: ""
+    loop: true
 ```
 
 ### Sources/Sinks
@@ -56,7 +57,8 @@ path: "avfoundation://?audio_dev=0&video_dev=6"
 ```
 
 ### Filters
-A list of audio/video filters to run the streams through for burned in timestamps, scaling, etc
+A list of audio/video filters to run the streams through for burned in timestamps, scaling, etc. There should be a handful
+of filters included by default, but the config should be extensible with a top-level `cus`
 
 ## Command Usage:
 
@@ -66,4 +68,23 @@ lilcaster scenario simple_stream #run the `simple_stream` scenario
 lilcaster scenario simple_stream --source newsource.mp4 # run `simplestream` but override the source. This will replace ALL sources
 lilcaster scenario simple_stream --sink rtmps://example.com/newstreamkey #run simplestream but override the sinks
 ```
+
+# Code Considerations
+
+# Golang
+lilcaster should be written in idiomatic Go
+
+## ffmpeg
+lilcaster will locate the ffmpeg binary in the users path (or specifically via config/env variable). ffmpeg will be called using the `ezec`
+module `github.com/jbain/ezec` This is a thin wrapper around GO's native cmd.Exec method.
+
+ffmpeg will be configured to output `progress` to `pipe:3` and an ezec.Consumer will need to be setup to parser the progress output.
+A consumer will also be needed collect the rest of the ffmpeg output.
+
+When running lilcaster by default a user should see feedback that video is being processed, but not all the verbose ffmpeg output
+
+## CLI
+cobra/viper should be used to handle configuration and CLI command
+
+
 
