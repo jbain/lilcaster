@@ -1,0 +1,14 @@
+scenarios:
+  - name: simple_stream
+    sources:
+      - path: /path/of/source.mp4
+    sinks:
+      - path: rtmp://ingest.example.com/abc123/streamkey
+    filters:
+      - type: scale
+        width: "-2"
+        height: "480"
+      - type: timestamp
+      - type: custom
+        string: "eq=brightness=0.1"
+    loop: -1
