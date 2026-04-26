@@ -1,9 +1,9 @@
 scenarios:
   - name: simple_stream
     sources:
-      - path: /path/of/source.mp4
+      - path: /Users/jbain/video_assets/big_buck_bunny_1080p_stereo.avi
     sinks:
-      - path: rtmp://ingest.example.com/abc123/streamkey
+      - path: rtmp://127.0.0.1:1935/live/test
     filters:
       - type: scale
         width: "-2"

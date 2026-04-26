@@ -6,6 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var cfgFile string
+
 var rootCmd = &cobra.Command{
 	Use:   "lilcaster",
 	Short: "lilcaster — ffmpeg-wrapped livestream runner",
@@ -22,4 +24,5 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file path (default search: $LILCASTER_CONFIG, ./lilcaster.yml, ~/.config/lilcaster/lilcaster.yml)")
 }
