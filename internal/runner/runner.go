@@ -67,9 +67,12 @@ func Run(sc config.Scenario, ov Overrides, verbose bool) error {
 			actSIGUSR1       // reuse paths + restart
 		)
 
-		var act action
+		var (
+			act     action
+			waitErr error
+		)
 		select {
-		case <-waitDone:
+		case waitErr = <-waitDone:
 			act = actExit
 		case sig := <-sigCh:
 			switch sig {
@@ -93,9 +96,16 @@ func Run(sc config.Scenario, ov Overrides, verbose bool) error {
 			fmt.Println()
 		}
 
+		if act == actExit && waitErr != nil {
+			fmt.Fprintf(os.Stderr, "ffmpeg exited with error: %v\n", waitErr)
+			for _, line := range proc.StderrLines() {
+				fmt.Fprintln(os.Stderr, line)
+			}
+		}
+
 		switch act {
 		case actExit, actStop:
-			return nil
+			return waitErr
 
 		case actSIGHUP:
 			sources, err = reResolveAll(sources)
@@ -119,7 +129,7 @@ func runTicker(ctx context.Context, scenarioName string, parser *ffmpeg.Parser) 
 	for {
 		select {
 		case <-ticker.C:
-			fmt.Printf("\r%s", ffmpeg.Render(scenarioName, parser.State()))
+			fmt.Printf("\r\033[K%s", ffmpeg.Render(scenarioName, parser.State()))
 		case <-ctx.Done():
 			return
 		}

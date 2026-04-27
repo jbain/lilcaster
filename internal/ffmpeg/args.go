@@ -23,7 +23,7 @@ func BuildArgs(
 		if sc.Loop != 0 {
 			args = append(args, "-stream_loop", strconv.Itoa(sc.Loop))
 		}
-		args = append(args, "-i", src.Path)
+		args = append(args, "-re", "-i", src.Path)
 	}
 
 	if filterStr != "" {

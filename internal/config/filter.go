@@ -25,6 +25,10 @@ type CustomFilter struct {
 
 func (c *CustomFilter) kind() string { return "custom" }
 
+type PhraseFilter struct{}
+
+func (p *PhraseFilter) kind() string { return "phrase" }
+
 // FilterEntry is the YAML-dispatchable wrapper around a Filter.
 // Scenario.Filters holds []FilterEntry so the custom unmarshaler runs per element.
 type FilterEntry struct {
@@ -71,6 +75,15 @@ func (fe *FilterEntry) UnmarshalYAML(value *yaml.Node) error {
 			return fmt.Errorf("filter custom: 'string' is required")
 		}
 		fe.Filter = &f
+
+	case "phrase":
+		allowed := map[string]bool{"type": true}
+		for k := range raw {
+			if !allowed[k] {
+				return fmt.Errorf("filter phrase: unexpected field %q", k)
+			}
+		}
+		fe.Filter = &PhraseFilter{}
 
 	default:
 		return fmt.Errorf("filter: unknown type %q", typVal)

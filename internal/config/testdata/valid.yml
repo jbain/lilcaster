@@ -11,4 +11,5 @@ scenarios:
       - type: timestamp
       - type: custom
         string: "eq=brightness=0.1"
+      - type: phrase
     loop: -1

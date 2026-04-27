@@ -16,7 +16,8 @@ type Process struct {
 	Parser *Parser
 
 	progressConsumer *consumers.CallbackConsumer
-	stderrConsumer   *consumers.CallbackConsumer
+	stderrRing       *consumers.LastNConsumer
+	stderrVerbose    *consumers.CallbackConsumer // nil in non-verbose mode
 }
 
 func New(args SliceArgs, parser *Parser, verbose bool) (*Process, error) {
@@ -30,27 +31,40 @@ func New(args SliceArgs, parser *Parser, verbose bool) (*Process, error) {
 	progressConsumer := consumers.NewCallbackConsumer("progress", 64, parser.Feed)
 	cmd.AddFd([]ezec.LineConsumer{progressConsumer})
 
-	var stderrFn func(string)
+	stderrRing := consumers.NewLastNConsumer("stderr-ring", 64, 10)
+	stderrConsumers := []ezec.LineConsumer{stderrRing}
+
+	var stderrVerbose *consumers.CallbackConsumer
 	if verbose {
-		stderrFn = func(line string) { fmt.Fprintln(os.Stderr, line) }
-	} else {
-		stderrFn = func(string) {}
+		stderrVerbose = consumers.NewCallbackConsumer("stderr-verbose", 64, func(line string) {
+			fmt.Fprintln(os.Stderr, line)
+		})
+		stderrConsumers = append(stderrConsumers, stderrVerbose)
 	}
-	stderrConsumer := consumers.NewCallbackConsumer("stderr", 64, stderrFn)
-	cmd.Stderr = []ezec.LineConsumer{stderrConsumer}
+	cmd.Stderr = stderrConsumers
 
 	return &Process{
 		Cmd:              cmd,
 		Parser:           parser,
 		progressConsumer: progressConsumer,
-		stderrConsumer:   stderrConsumer,
+		stderrRing:       stderrRing,
+		stderrVerbose:    stderrVerbose,
 	}, nil
 }
 
 func (p *Process) Start() error {
 	go p.progressConsumer.Start()
-	go p.stderrConsumer.Start()
+	go p.stderrRing.Start()
+	if p.stderrVerbose != nil {
+		go p.stderrVerbose.Start()
+	}
 	return p.Cmd.Start()
+}
+
+// StderrLines returns the last (up to 10) lines written to ffmpeg's stderr.
+// Safe to call after Wait returns.
+func (p *Process) StderrLines() []string {
+	return p.stderrRing.Lines()
 }
 
 func (p *Process) Wait() error {

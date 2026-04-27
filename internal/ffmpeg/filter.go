@@ -21,6 +21,10 @@ func Build(filters []config.FilterEntry) string {
 			parts = append(parts, timestampFilter)
 		case *config.CustomFilter:
 			parts = append(parts, f.String)
+		case *config.PhraseFilter:
+			phrase := randomPhrase()
+			color := randomColor()
+			parts = append(parts, "drawtext=text='"+phrase+"':x=10:y=H-th-10:fontsize=24:fontcolor="+color+":box=1:boxcolor=black@0.5")
 		}
 	}
 	return strings.Join(parts, ",")

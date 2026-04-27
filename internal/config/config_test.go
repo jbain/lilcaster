@@ -28,10 +28,10 @@ func TestLoad_ValidFixture(t *testing.T) {
 	if sc.Name != "simple_stream" {
 		t.Errorf("name: got %q, want %q", sc.Name, "simple_stream")
 	}
-	if len(sc.Sources) != 1 || sc.Sources[0].Path != "/path/of/source.mp4" {
+	if len(sc.Sources) != 1 || sc.Sources[0].Path != "/Users/jbain/video_assets/big_buck_bunny_1080p_stereo.avi" {
 		t.Errorf("sources: %+v", sc.Sources)
 	}
-	if len(sc.Sinks) != 1 || sc.Sinks[0].Path != "rtmp://ingest.example.com/abc123/streamkey" {
+	if len(sc.Sinks) != 1 || sc.Sinks[0].Path != "rtmp://127.0.0.1:1935/live/test" {
 		t.Errorf("sinks: %+v", sc.Sinks)
 	}
 	if sc.Loop != -1 {
@@ -135,6 +135,42 @@ scenarios:
 	_, err := loadFromString(doc)
 	if err == nil {
 		t.Fatal("expected error for timestamp with extra field")
+	}
+}
+
+func TestLoad_PhraseFilter(t *testing.T) {
+	const doc = `
+scenarios:
+  - name: ok
+    sources: []
+    sinks: []
+    filters:
+      - type: phrase
+    loop: 0
+`
+	cfg, err := loadFromString(doc)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if _, ok := cfg.Scenarios[0].Filters[0].Filter.(*PhraseFilter); !ok {
+		t.Errorf("filter[0]: expected *PhraseFilter, got %T", cfg.Scenarios[0].Filters[0].Filter)
+	}
+}
+
+func TestLoad_PhraseExtraField(t *testing.T) {
+	const doc = `
+scenarios:
+  - name: bad
+    sources: []
+    sinks: []
+    filters:
+      - type: phrase
+        extra: forbidden
+    loop: 0
+`
+	_, err := loadFromString(doc)
+	if err == nil {
+		t.Fatal("expected error for phrase with extra field")
 	}
 }
 
