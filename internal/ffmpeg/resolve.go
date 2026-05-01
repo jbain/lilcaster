@@ -3,6 +3,7 @@ package ffmpeg
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -29,6 +30,9 @@ func Resolve(e config.Endpoint) (ResolvedEndpoint, error) {
 		cmd.Stderr = &stderr
 		if err := cmd.Run(); err != nil {
 			return re, fmt.Errorf("script %q: %w\nstderr: %s", scriptPath, err, stderr.String())
+		}
+		if s := stderr.String(); s != "" {
+			fmt.Fprint(os.Stderr, s)
 		}
 		re.Path = strings.TrimSpace(stdout.String())
 
