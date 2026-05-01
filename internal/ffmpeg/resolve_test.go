@@ -3,6 +3,7 @@ package ffmpeg
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -18,7 +19,7 @@ func TestResolve_Passthrough(t *testing.T) {
 	if re.Path != e.Path {
 		t.Errorf("path: got %q, want %q", re.Path, e.Path)
 	}
-	if re.Original != e {
+	if !reflect.DeepEqual(re.Original, e) {
 		t.Error("Original not preserved")
 	}
 }
@@ -41,7 +42,7 @@ func TestResolve_ScriptAbsolute(t *testing.T) {
 	if re.Path != "/resolved/path.mp4" {
 		t.Errorf("path: got %q, want %q", re.Path, "/resolved/path.mp4")
 	}
-	if re.Original != e {
+	if !reflect.DeepEqual(re.Original, e) {
 		t.Error("Original not preserved")
 	}
 }

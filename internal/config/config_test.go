@@ -37,8 +37,8 @@ func TestLoad_ValidFixture(t *testing.T) {
 	if sc.Loop != -1 {
 		t.Errorf("loop: got %d, want -1", sc.Loop)
 	}
-	if len(sc.Filters) != 3 {
-		t.Fatalf("filter count: got %d, want 3", len(sc.Filters))
+	if len(sc.Filters) != 4 {
+		t.Fatalf("filter count: got %d, want 4", len(sc.Filters))
 	}
 
 	scale, ok := sc.Filters[0].Filter.(*ScaleFilter)
@@ -171,6 +171,32 @@ scenarios:
 	_, err := loadFromString(doc)
 	if err == nil {
 		t.Fatal("expected error for phrase with extra field")
+	}
+}
+
+func TestLoad_EndpointArgs(t *testing.T) {
+	const doc = `
+scenarios:
+  - name: ok
+    sources:
+      - path: script://get-source.sh
+        args:
+          - "--env"
+          - "production"
+    sinks:
+      - path: rtmp://example.com/live
+    loop: 0
+`
+	cfg, err := loadFromString(doc)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	src := cfg.Scenarios[0].Sources[0]
+	if src.Path != "script://get-source.sh" {
+		t.Errorf("path: got %q", src.Path)
+	}
+	if len(src.Args) != 2 || src.Args[0] != "--env" || src.Args[1] != "production" {
+		t.Errorf("args: got %v", src.Args)
 	}
 }
 

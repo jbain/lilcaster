@@ -23,7 +23,8 @@ type Scenario struct {
 
 // Endpoint is the shared shape for sources and sinks.
 type Endpoint struct {
-	Path string `yaml:"path"`
+	Path string   `yaml:"path"`
+	Args []string `yaml:"args"`
 }
 
 // Load reads and parses the config file using the 4-location precedence:
