@@ -6,8 +6,8 @@ import (
 	"lilcaster/internal/config"
 )
 
-const timestampFilter = "drawtext=text='%{localtime\\:%T}':x=10:y=10:fontsize=24:fontcolor=white:box=1:boxcolor=black@0.5" +
-	",drawtext=text='%{pts\\:hms}':x=10:y=44:fontsize=24:fontcolor=white:box=1:boxcolor=black@0.5"
+const timestampFilter = "drawtext=text='%{localtime\\:%Y/%m/%d %T %Z}':x=10:y=10:fontsize=28:fontcolor=white:box=1:boxcolor=black@0.5" +
+	",drawtext=text='%{pts\\:hms}':x=10:y=48:fontsize=28:fontcolor=white:box=1:boxcolor=black@0.5"
 
 // Build returns the value for ffmpeg's -vf flag. Returns empty string when
 // filters is empty (caller should omit the -vf flag entirely).
@@ -24,7 +24,7 @@ func Build(filters []config.FilterEntry) string {
 		case *config.PhraseFilter:
 			phrase := randomPhrase()
 			color := randomColor()
-			parts = append(parts, "drawtext=text='"+phrase+"':x=10:y=H-th-10:fontsize=24:fontcolor="+color+":box=1:boxcolor=black@0.5")
+			parts = append(parts, "drawtext=text='"+phrase+"':x=10:y=H-th-10:fontsize=28:fontcolor="+color+":box=1:boxcolor=black@0.5")
 		}
 	}
 	return strings.Join(parts, ",")

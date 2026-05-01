@@ -86,13 +86,13 @@ scenarios:
 
 ### Endpoints (sources and sinks)
 
-Each endpoint has a `path` and an optional `args` list:
+Each endpoint has a `path` and an optional `script_args` list:
 
 ```yaml
 sources:
   - path: /videos/clip.mp4
   - path: script://scripts/get-url.sh
-    args:
+    script_args:
       - "--region"
       - "us-east-1"
 ```
@@ -110,7 +110,7 @@ sources:
   path: "script://scripts/get-stream-key.sh"
   ```
 
-  The script receives any `args` as command-line arguments. Its stdout (trimmed) becomes the endpoint path. On `SIGHUP`, scripts are re-executed to pick up fresh values.
+  The script receives any `script_args` as command-line arguments. Its stdout (trimmed) becomes the endpoint path. On `SIGHUP`, scripts are re-executed to pick up fresh values.
 
 Multiple sources are each passed as separate `-i` inputs to ffmpeg. Multiple sinks are each passed as separate output paths.
 
@@ -146,7 +146,7 @@ Burns the current wall-clock time and the stream position into the top-left corn
 - type: timestamp
 ```
 
-The overlay shows two lines: local time (`HH:MM:SS`) and stream position (`H:MM:SS`).
+The overlay shows two lines: date, local time, and timezone (`YYYY/MM/DD HH:MM:SS TZ`) and stream position (`H:MM:SS`).
 
 ### `phrase`
 

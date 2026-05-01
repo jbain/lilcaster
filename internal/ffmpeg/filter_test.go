@@ -56,7 +56,7 @@ func TestBuild(t *testing.T) {
 
 func TestBuildPhrase(t *testing.T) {
 	got := Build([]config.FilterEntry{{Filter: &config.PhraseFilter{}}})
-	re := regexp.MustCompile(`^drawtext=text='[a-z]+-[a-z]+-[a-z]+':x=10:y=H-th-10:fontsize=24:fontcolor=[a-z]+:box=1:boxcolor=black@0\.5$`)
+	re := regexp.MustCompile(`^drawtext=text='[a-z]+-[a-z]+-[a-z]+':x=10:y=H-th-10:fontsize=28:fontcolor=[a-z]+:box=1:boxcolor=black@0\.5$`)
 	if !re.MatchString(got) {
 		t.Errorf("Build() phrase = %q, want match pattern %q", got, re.String())
 	}
@@ -67,7 +67,7 @@ func TestBuildPhraseInChain(t *testing.T) {
 		{Filter: &config.ScaleFilter{Width: "1280", Height: "720"}},
 		{Filter: &config.PhraseFilter{}},
 	})
-	re := regexp.MustCompile(`^scale=1280:720,drawtext=text='[a-z]+-[a-z]+-[a-z]+':x=10:y=H-th-10:fontsize=24:fontcolor=[a-z]+:box=1:boxcolor=black@0\.5$`)
+	re := regexp.MustCompile(`^scale=1280:720,drawtext=text='[a-z]+-[a-z]+-[a-z]+':x=10:y=H-th-10:fontsize=28:fontcolor=[a-z]+:box=1:boxcolor=black@0\.5$`)
 	if !re.MatchString(got) {
 		t.Errorf("Build() scale+phrase = %q, want match pattern %q", got, re.String())
 	}

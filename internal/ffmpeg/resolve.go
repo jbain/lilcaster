@@ -26,7 +26,7 @@ func Resolve(e config.Endpoint) (ResolvedEndpoint, error) {
 			scriptPath = "./" + scriptPath
 		}
 		var stdout, stderr bytes.Buffer
-		cmd := exec.Command(scriptPath, e.Args...)
+		cmd := exec.Command(scriptPath, e.ScriptArgs...)
 		cmd.Stdout = &stdout
 		cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
 		if err := cmd.Run(); err != nil {

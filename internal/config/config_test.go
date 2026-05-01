@@ -180,7 +180,7 @@ scenarios:
   - name: ok
     sources:
       - path: script://get-source.sh
-        args:
+        script_args:
           - "--env"
           - "production"
     sinks:
@@ -195,8 +195,8 @@ scenarios:
 	if src.Path != "script://get-source.sh" {
 		t.Errorf("path: got %q", src.Path)
 	}
-	if len(src.Args) != 2 || src.Args[0] != "--env" || src.Args[1] != "production" {
-		t.Errorf("args: got %v", src.Args)
+	if len(src.ScriptArgs) != 2 || src.ScriptArgs[0] != "--env" || src.ScriptArgs[1] != "production" {
+		t.Errorf("script_args: got %v", src.ScriptArgs)
 	}
 }
 
