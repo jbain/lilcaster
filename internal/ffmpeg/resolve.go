@@ -3,6 +3,7 @@ package ffmpeg
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -27,12 +28,9 @@ func Resolve(e config.Endpoint) (ResolvedEndpoint, error) {
 		var stdout, stderr bytes.Buffer
 		cmd := exec.Command(scriptPath)
 		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
+		cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
 		if err := cmd.Run(); err != nil {
 			return re, fmt.Errorf("script %q: %w\nstderr: %s", scriptPath, err, stderr.String())
-		}
-		if s := stderr.String(); s != "" {
-			fmt.Fprint(os.Stderr, s)
 		}
 		re.Path = strings.TrimSpace(stdout.String())
 
